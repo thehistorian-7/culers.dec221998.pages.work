@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- TAB DISGUISE: Tab title & favicon look like Google Docs -->
+  <title>Google Docs - AP World History Notes</title>
+  <link rel="icon" href="https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico">
+  
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+    body { background: #121214; color: #ffffff; padding: 20px; }
+    header { max-width: 900px; margin: 0 auto 30px; text-align: center; }
+    h1 { font-size: 1.4rem; color: #888; margin-bottom: 15px; }
+    
+    #search {
+      width: 100%; max-width: 450px; padding: 12px 18px;
+      border-radius: 6px; border: 1px solid #333; background: #222;
+      color: #fff; font-size: 1rem; outline: none;
+    }
+    #search:focus { border-color: #4f46e5; }
+    
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; max-width: 900px; margin: 0 auto; }
+    .card { background: #1e1e24; border: 1px solid #2d2d35; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; }
+    .card:hover { transform: translateY(-3px); border-color: #4f46e5; }
+    .card h3 { font-size: 1rem; }
+    
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; flex-direction: column; }
+    .modal-bar { padding: 10px 20px; background: #1e1e24; display: flex; justify-content: space-between; align-items: center; }
+    .close-btn { background: #ef4444; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+    iframe { width: 100%; height: 100%; border: none; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Academic Resource Directory</h1>
+    <input type="text" id="search" placeholder="Search catalog..." onkeyup="filterCatalog()">
+  </header>
+
+  <div class="grid" id="catalogGrid"></div>
+
+  <div class="modal" id="gameModal">
+    <div class="modal-bar">
+      <span id="gameTitle">Loading...</span>
+      <button class="close-btn" onclick="closeGame()">Close (Esc)</button>
+    </div>
+    <iframe id="gameFrame" src=""></iframe>
+  </div>
+
+  <script>
+    // GAME COLLECTION: Add or edit game names and embed URLs here
+    const games = [
+      { name: 'BitLife', url: 'https://bitv1.github.io/' },
+      { name: 'Classic Snake', url: 'https://playsnake.org/' },
+      { name: 'Surviv.io / Battle Royale', url: 'https://surviv-io.github.io/' },
+      { name: '2048', url: 'https://play2048.co/' },
+      { name: 'Hextris', url: 'https://hextris.io/' },
+      { name: 'Geometry Dash (Scratch)', url: 'https://scratch.mit.edu/projects/105500895/embed' },
+      { name: 'Retro Bowl (Scratch)', url: 'https://scratch.mit.edu/projects/486259021/embed' },
+      { name: 'Flappy Bird', url: 'https://flappybird.io/' }
+    ];
+    function render(list) {
+      const grid = document.getElementById('catalogGrid');
+      grid.innerHTML = '';
+      list.forEach(g => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.onclick = () => openGame(g.name, g.url);
+        card.innerHTML = `<h3>${g.name}</h3>`;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterCatalog() {
+      const q = document.getElementById('search').value.toLowerCase();
+      const filtered = games.filter(g => g.name.toLowerCase().includes(q));
+      render(filtered);
+    }
+
+    function openGame(name, url) {
+      document.getElementById('gameTitle').textContent = name;
+      document.getElementById('gameFrame').src = url;
+      document.getElementById('gameModal').style.display = 'flex';
+    }
+
+    function closeGame() {
+      document.getElementById('gameModal').style.display = 'none';
+      document.getElementById('gameFrame').src = '';
+    }
+
+    // PANIC SHORTCUT: Pressing ~ (tilde key below Esc) redirects to Canvas LMS
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '`') {
+        window.location.href = 'https://canvas.instructure.com';
+      }
+      if (e.key === 'Escape') {
+        closeGame();
+      }
+    });
+
+    render(games);
+  </script>
+</body>
+</html>
