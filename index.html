@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -6,21 +6,24 @@
   <title>Unit 4 Study Portal</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background: #0f172a; color: #f8fafc; padding: 24px; }
+    body { background: #0f172a; color: #f8fafc; padding: 24px; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
     
     /* Header & Search */
-    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; border-bottom: 1px solid #1e293b; padding-bottom: 16px; }
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; border-bottom: 1px solid #1e293b; padding-bottom: 16px; flex-shrink: 0; }
     h1 { font-size: 1.5rem; font-weight: 700; }
     .controls { display: flex; gap: 12px; align-items: center; }
     #countBadge { background: #1e293b; padding: 6px 12px; border-radius: 999px; font-size: 0.85rem; color: #94a3b8; }
     #search { background: #1e293b; border: 1px solid #334155; color: #fff; padding: 8px 14px; border-radius: 8px; outline: none; width: 220px; }
     #search:focus { border-color: #38bdf8; }
 
-    /* Auto-scaling Responsive Grid */
+    /* Scrollable Responsive Grid Container */
     #grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
       gap: 16px;
+      overflow-y: auto;
+      flex: 1;
+      padding-bottom: 24px;
     }
     .card {
       background: #1e293b;
@@ -88,21 +91,24 @@
 
   <script>
     // ==========================================
-    // ADD AS MANY GAMES AS YOU WANT BELOW:
+    // GAMES ARRAY WITH CUSTOM CATEGORIES
     // ==========================================
-const games = [
-      { name: 'ShellShockers', url: 'https://texasearlystatehood-santanna.blxcksoul111.workers.dev/' },
-      { name: 'Classic Snake', url: 'https://slyth.kabyik.dev/' },
-      { name: 'Subway Surfers', url: 'https://texasearlystatehood-gcc.blxcksoul111.workers.dev/' },
-      { name: 'Bounce', url: 'https://texasearlystatehood-ma.blxcksoul111.workers.dev/' },
-      { name: 'Basketball Stars', url: 'https://texasearlystatehood-houston.blxcksoul111.workers.dev/' },
-      { name: 'Pako Highway', url: 'https://texasearlystatehood-haden-ed.blxcksoul111.workers.dev/' },
-      { name: 'Retro Bowl', url: 'https://texasearlystatehood-mire-lamar.blxcksoul111.workers.dev/' },
-      { name: 'Flappy Bird', url: 'https://texasearlystatehood-loren-zavala.blxcksoul111.workers.dev/' },
-      { name: 'Sci-Fi Shooter', url: 'https://texasearlystatehood-an-jones.blxcksoul111.workers.dev/' },
-      { name: 'FPS Shooter', url: 'https://texasearlystatehood-ed-burl.blxcksoul111.workers.dev/' },
-      { name: 'RocketLauncherSim', url: 'https://texasearlystatehood-tejanos.blxcksoul111.workers.dev/' }
+    const games = [
+      { name: 'ShellShockers', category: 'FPS', url: 'https://texasearlystatehood-santanna.blxcksoul111.workers.dev/' },
+      { name: 'Classic Snake', category: 'Arcade', url: 'https://slyth.kabyik.dev/' },
+      { name: 'Subway Surfers', category: 'Runner/Platformer', url: 'https://texasearlystatehood-gcc.blxcksoul111.workers.dev/' },
+      { name: 'Bounce', category: 'Platformer', url: 'https://texasearlystatehood-ma.blxcksoul111.workers.dev/' },
+      { name: 'Basketball Stars', category: 'Sports', url: 'https://texasearlystatehood-houston.blxcksoul111.workers.dev/' },
+      { name: 'Pako Highway', category: 'Driving', url: 'https://texasearlystatehood-haden-ed.blxcksoul111.workers.dev/' },
+      { name: 'Retro Bowl', category: 'Sports', url: 'https://texasearlystatehood-mire-lamar.blxcksoul111.workers.dev/' },
+      { name: 'Flappy Bird', category: 'Arcade', url: 'https://texasearlystatehood-loren-zavala.blxcksoul111.workers.dev/' },
+      { name: 'Sci-Fi Shooter', category: 'FPS', url: 'https://texasearlystatehood-an-jones.blxcksoul111.workers.dev/' },
+      { name: 'FPS Shooter', category: 'FPS', url: 'https://texasearlystatehood-ed-burl.blxcksoul111.workers.dev/' },
+      { name: 'RocketLauncherSim', category: 'Simulation', url: 'https://texasearlystatehood-tejanos.blxcksoul111.workers.dev/' }
+      { name: 'OpenFront', category: 'Strategy', url: 'https://texasearlystatehood-openfront.blxcksoul111.workers.dev/' }
+      { name: 'SpeedStar', category: 'Runner/Platformer', url: 'https://texasearlystatehood-openfront.blxcksoul111.workers.dev/' }
     ];
+
     const grid = document.getElementById('grid');
     const countBadge = document.getElementById('countBadge');
     const searchInput = document.getElementById('search');
@@ -112,17 +118,20 @@ const games = [
 
     function renderGames() {
       const query = searchInput.value.toLowerCase();
-      const filtered = games.filter(g => g.name.toLowerCase().includes(query));
+      // Searches both game name AND category text now!
+      const filtered = games.filter(g => 
+        g.name.toLowerCase().includes(query) || g.category.toLowerCase().includes(query)
+      );
       
       countBadge.textContent = `${filtered.length} ${filtered.length === 1 ? 'Module' : 'Modules'}`;
       grid.innerHTML = '';
 
-      filtered.forEach((game, index) => {
+      filtered.forEach((game) => {
         const card = document.createElement('div');
         card.className = 'card';
         card.innerHTML = `
           <div class="card-title">${game.name}</div>
-          <div class="card-tag">Module #${index + 1}</div>
+          <div class="card-tag">${game.category}</div>
         `;
         card.onclick = () => openGame(game);
         grid.appendChild(card);
@@ -137,7 +146,7 @@ const games = [
 
     function closeGame() {
       overlay.style.display = 'none';
-      frame.src = ''; // Stops audio/game running in background
+      frame.src = ''; 
     }
 
     function toggleFullscreen() {
@@ -153,4 +162,4 @@ const games = [
   </script>
 
 </body>
-</html> 
+</html>
