@@ -1,57 +1,96 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- TAB DISGUISE: Tab title & favicon look like Google Docs -->
-  <title>Google Docs - AP World History Notes</title>
-  <link rel="icon" href="https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico">
-  
+  <title>Unit 4 Study Portal</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
-    body { background: #121214; color: #ffffff; padding: 20px; }
-    header { max-width: 900px; margin: 0 auto 30px; text-align: center; }
-    h1 { font-size: 1.4rem; color: #888; margin-bottom: 15px; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: #0f172a; color: #f8fafc; padding: 24px; }
     
-    #search {
-      width: 100%; max-width: 450px; padding: 12px 18px;
-      border-radius: 6px; border: 1px solid #333; background: #222;
-      color: #fff; font-size: 1rem; outline: none;
+    /* Header & Search */
+    header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; border-bottom: 1px solid #1e293b; padding-bottom: 16px; }
+    h1 { font-size: 1.5rem; font-weight: 700; }
+    .controls { display: flex; gap: 12px; align-items: center; }
+    #countBadge { background: #1e293b; padding: 6px 12px; border-radius: 999px; font-size: 0.85rem; color: #94a3b8; }
+    #search { background: #1e293b; border: 1px solid #334155; color: #fff; padding: 8px 14px; border-radius: 8px; outline: none; width: 220px; }
+    #search:focus { border-color: #38bdf8; }
+
+    /* Auto-scaling Responsive Grid */
+    #grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 16px;
     }
-    #search:focus { border-color: #4f46e5; }
-    
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 15px; max-width: 900px; margin: 0 auto; }
-    .card { background: #1e1e24; border: 1px solid #2d2d35; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; }
-    .card:hover { transform: translateY(-3px); border-color: #4f46e5; }
-    .card h3 { font-size: 1rem; }
-    
-    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999; flex-direction: column; }
-    .modal-bar { padding: 10px 20px; background: #1e1e24; display: flex; justify-content: space-between; align-items: center; }
-    .close-btn { background: #ef4444; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-    iframe { width: 100%; height: 100%; border: none; }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 110px;
+    }
+    .card:hover { transform: translateY(-3px); border-color: #38bdf8; }
+    .card-title { font-size: 1.1rem; font-weight: 600; }
+    .card-tag { font-size: 0.75rem; color: #38bdf8; margin-top: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* Fullscreen Iframe Player Overlay */
+    #playerOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #000;
+      z-index: 100;
+      flex-direction: column;
+    }
+    #playerBar {
+      background: #0f172a;
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e293b;
+    }
+    .btn { background: #334155; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .btn:hover { background: #475569; }
+    .btn-close { background: #ef4444; }
+    .btn-close:hover { background: #dc2626; }
+    iframe { flex: 1; width: 100%; border: none; }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>Academic Resource Directory</h1>
-    <input type="text" id="search" placeholder="Search catalog..." onkeyup="filterCatalog()">
+    <h1>Unit 4 Study Resources</h1>
+    <div class="controls">
+      <span id="countBadge">0 Modules</span>
+      <input type="text" id="search" placeholder="Filter modules..." oninput="renderGames()">
+    </div>
   </header>
 
-  <div class="grid" id="catalogGrid"></div>
+  <main id="grid"></main>
 
-  <div class="modal" id="gameModal">
-    <div class="modal-bar">
-      <span id="gameTitle">Loading...</span>
-      <button class="close-btn" onclick="closeGame()">Close (Esc)</button>
+  <!-- Player Modal -->
+  <div id="playerOverlay">
+    <div id="playerBar">
+      <span id="activeTitle">Module</span>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn" onclick="toggleFullscreen()">Fullscreen</button>
+        <button class="btn btn-close" onclick="closeGame()">Back</button>
+      </div>
     </div>
-    <iframe id="gameFrame" src=""></iframe>
+    <iframe id="gameFrame" allowfullscreen></iframe>
   </div>
 
   <script>
-    // GAME COLLECTION: Add or edit game names and embed URLs here
-    const games = [
+    // ==========================================
+    // ADD AS MANY GAMES AS YOU WANT BELOW:
+    // ==========================================
+   const games = [
       { name: 'ShellShockers', url: 'https://texasearlystatehood-santanna.blxcksoul111.workers.dev/' },
       { name: 'Classic Snake', url: 'https://slyth.kabyik.dev/' },
       { name: 'Subway Surfers', url: 'https://texasearlystatehood-gcc.blxcksoul111.workers.dev/' },
@@ -62,46 +101,64 @@
       { name: 'Flappy Bird', url: 'https://texasearlystatehood-loren-zavala.blxcksoul111.workers.dev/' }
       { name: 'Sci-Fi Shooter', url: 'https://texasearlystatehood-an-jones.blxcksoul111.workers.dev/' }
     ];
-    function render(list) {
-      const grid = document.getElementById('catalogGrid');
+    const grid = document.getElementById('grid');
+    const countBadge = document.getElementById('countBadge');
+    const searchInput = document.getElementById('search');
+    const overlay = document.getElementById('playerOverlay');
+    const frame = document.getElementById('gameFrame');
+    const activeTitle = document.getElementById('activeTitle');
+
+    function renderGames() {
+      const query = searchInput.value.toLowerCase();
+      const filtered = games.filter(g => g.name.toLowerCase().includes(query));
+      
+      countBadge.textContent = `${filtered.length} ${filtered.length === 1 ? 'Module' : 'Modules'}`;
       grid.innerHTML = '';
-      list.forEach(g => {
+
+      filtered.forEach((game, index) => {
         const card = document.createElement('div');
         card.className = 'card';
-        card.onclick = () => openGame(g.name, g.url);
-        card.innerHTML = `<h3>${g.name}</h3>`;
+        card.innerHTML = `
+          <div class="card-title">${game.name}</div>
+          <div class="card-tag">Module #${index + 1}</div>
+        `;
+        card.onclick = () => openGame(game);
         grid.appendChild(card);
       });
     }
 
-    function filterCatalog() {
-      const q = document.getElementById('search').value.toLowerCase();
-      const filtered = games.filter(g => g.name.toLowerCase().includes(q));
-      render(filtered);
-    }
-
-    function openGame(name, url) {
-      document.getElementById('gameTitle').textContent = name;
-      document.getElementById('gameFrame').src = url;
-      document.getElementById('gameModal').style.display = 'flex';
+    function openGame(game) {
+      activeTitle.textContent = game.name;
+      frame.src = game.url;
+      overlay.style.display = 'flex';
     }
 
     function closeGame() {
-      document.getElementById('gameModal').style.display = 'none';
-      document.getElementById('gameFrame').src = '';
+      overlay.style.display = 'none';
+      frame.src = ''; // Stops audio/game running in background
     }
 
-    // PANIC SHORTCUT: Pressing ~ (tilde key below Esc) redirects to Canvas LMS
-    document.addEventListener('keydown', (e) => {
-      if (e.key === '`') {
-        window.location.href = 'https://canvas.instructure.com';
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        overlay.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
       }
-      if (e.key === 'Escape') {
-        closeGame();
-      }
-    });
+    }
 
-    render(games);
+    // Initial render
+    renderGames();
   </script>
+
 </body>
-</html>
+</html> const games = [
+      { name: 'ShellShockers', url: 'https://texasearlystatehood-santanna.blxcksoul111.workers.dev/' },
+      { name: 'Classic Snake', url: 'https://slyth.kabyik.dev/' },
+      { name: 'Subway Surfers', url: 'https://texasearlystatehood-gcc.blxcksoul111.workers.dev/' },
+      { name: 'Bounce', url: 'https://texasearlystatehood-ma.blxcksoul111.workers.dev/' },
+      { name: 'Basketball Stars', url: 'https://texasearlystatehood-houston.blxcksoul111.workers.dev/' },
+      { name: 'Pako Highway', url: 'https://texasearlystatehood-haden-ed.blxcksoul111.workers.dev/' },
+      { name: 'Retro Bowl', url: 'https://texasearlystatehood-mire-lamar.blxcksoul111.workers.dev/' },
+      { name: 'Flappy Bird', url: 'https://texasearlystatehood-loren-zavala.blxcksoul111.workers.dev/' }
+      { name: 'Sci-Fi Shooter', url: 'https://texasearlystatehood-an-jones.blxcksoul111.workers.dev/' }
+    ];
