@@ -103,8 +103,8 @@
       { name: 'Sci-Fi Shooter', category: 'FPS', url: 'https://texasearlystatehood-an-jones.blxcksoul111.workers.dev/' },
       { name: 'FPS Shooter', category: 'FPS', url: 'https://texasearlystatehood-ed-burl.blxcksoul111.workers.dev/' },
       { name: 'RocketLauncherSim', category: 'Simulation', url: 'https://texasearlystatehood-tejanos.blxcksoul111.workers.dev/' },
-      { name: 'OpenFront', category: 'Strategy', url: 'https://texasearlystatehood-openfront.blxcksoul111.workers.dev/' },
-      { name: 'SpeedStar', category: 'Runner/Platformer', url: 'https://texasearlystatehood-speedstar.blxcksoul111.workers.dev/' }
+      { name: 'OpenFront', category: 'Strategy', url: 'https://texasearlystatehood-openfront.blxcksoul111.workers.dev/', external: true },
+      { name: 'SpeedStar', category: 'Runner/Platformer', url: 'https://texasearlystatehood-speedstar.blxcksoul111.workers.dev/', external: true }
     ];
 
     const grid = document.getElementById('grid');
@@ -136,6 +136,10 @@
     }
 
     function openGame(game) {
+      if (game.external) {
+        window.open(game.url, '_blank');
+        return;
+      }
       activeTitle.textContent = game.name;
       frame.src = game.url;
       overlay.style.display = 'flex';
