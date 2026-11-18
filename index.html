@@ -29,7 +29,7 @@
 
         header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 30px;
             max-width: 600px;
         }
 
@@ -48,18 +48,47 @@
             margin: 0;
         }
 
+        /* Filter Buttons Bar */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 40px;
+            max-width: 900px;
+        }
+
+        .filter-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        /* Game Grid */
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 24px;
             width: 100%;
-            max-width: 1100px;
+            max-width: 1200px;
         }
 
         .card {
             background-color: var(--card-bg);
             border-radius: 16px;
-            padding: 28px;
+            padding: 24px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
             border: 1px solid var(--card-border);
             transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
@@ -78,18 +107,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
-        }
-
-        .emoji-icon {
-            font-size: 2.2rem;
-            background: rgba(56, 189, 248, 0.1);
-            width: 54px;
-            height: 54px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
+            margin-bottom: 14px;
         }
 
         .badge {
@@ -97,23 +115,16 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            padding: 5px 10px;
+            padding: 4px 10px;
             border-radius: 20px;
             background: rgba(129, 140, 248, 0.15);
             color: var(--accent-purple);
         }
 
         .card h3 {
-            margin: 0 0 10px 0;
-            font-size: 1.4rem;
+            margin: 0 0 8px 0;
+            font-size: 1.3rem;
             color: var(--text-main);
-        }
-
-        .card p {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin: 0 0 24px 0;
         }
 
         .play-btn {
@@ -122,12 +133,13 @@
             justify-content: center;
             background: linear-gradient(135deg, #0284c7, #0369a1);
             color: white;
-            padding: 12px 20px;
+            padding: 10px 18px;
             border-radius: 10px;
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: opacity 0.2s, transform 0.1s;
+            margin-top: 20px;
         }
 
         .play-btn:hover {
@@ -149,54 +161,80 @@
 <body>
 
     <header>
-        <h1>Zaviko12 Portal</h1>
+        <h1>Zaviko Portal</h1>
         <p>Instant high-performance browser games, curated for quick sessions.</p>
     </header>
 
-    <div class="grid">
-        <!-- Arcade Game -->
-        <div class="card">
-            <div>
-                <div class="card-header">
-                    <div class="emoji-icon">🍪</div>
-                    <span class="badge">Arcade</span>
-                </div>
-                <h3>Cookie Clicker</h3>
-                <p>The ultimate addictive incremental arcade challenge. Bake endless cookies and unlock massive production upgrades.</p>
-            </div>
-            <a href="https://texasearlystatehood-mexicorule.blxcksoul111.workers.dev/" target="_blank" class="play-btn">Play Now</a>
-        </div>
-
-        <!-- Driving Game -->
-        <div class="card">
-            <div>
-                <div class="card-header">
-                    <div class="emoji-icon">🚗</div>
-                    <span class="badge">Driving</span>
-                </div>
-                <h3>Slow Roads</h3>
-                <p>Relaxing procedural driving simulation. Cruise through endless scenic landscapes at your own pace.</p>
-            </div>
-            <a href="https://texasearlystatehood-cordovarebellion.blxcksoul111.workers.dev/" target="_blank" class="play-btn">Play Now</a>
-        </div>
-
-        <!-- Simulation Game -->
-        <div class="card">
-            <div>
-                <div class="card-header">
-                    <div class="emoji-icon">🧪</div>
-                    <span class="badge">Simulation</span>
-                </div>
-                <h3>Alchemy 2</h3>
-                <p>Mix elements, discover new creations, and build a massive scientific universe from scratch.</p>
-            </div>
-            <a href="https://texasearlystatehood-santafe.blxcksoul111.workers.dev/" target="_blank" class="play-btn">Play Now</a>
-        </div>
+    <!-- Category Filter Bar -->
+    <div class="filters" id="filterContainer">
+        <button class="filter-btn active" onclick="filterGames('All')">All Games</button>
+        <button class="filter-btn" onclick="filterGames('Arcade')">Arcade</button>
+        <button class="filter-btn" onclick="filterGames('FPS')">FPS</button>
+        <button class="filter-btn" onclick="filterGames('Driving')">Driving</button>
+        <button class="filter-btn" onclick="filterGames('Runner/Platformer')">Runner & Platformer</button>
+        <button class="filter-btn" onclick="filterGames('Sports')">Sports</button>
+        <button class="filter-btn" onclick="filterGames('Simulation')">Simulation</button>
+        <button class="filter-btn" onclick="filterGames('Strategy')">Strategy</button>
     </div>
 
+    <!-- Game Cards Container -->
+    <div class="grid" id="gameGrid"></div>
+
     <footer>
-        Zaviko12.pages.dev &bull; Powered by Cloudflare Pages
+        Zaviko Portal &bull; Powered by Cloudflare Pages
     </footer>
 
+    <script>
+        const games = [
+          { name: 'Cookie Clicker', category: 'Arcade', url: 'https://texasearlystatehood-mexicorule.blxcksoul111.workers.dev/' },
+          { name: 'Slow Roads', category: 'Driving', url: 'https://texasearlystatehood-cordovarebellion.blxcksoul111.workers.dev/' },
+          { name: 'Alchemy 2', category: 'Simulation', url: 'https://texasearlystatehood-santafe.blxcksoul111.workers.dev/' },
+          { name: 'ShellShockers', category: 'FPS', url: 'https://texasearlystatehood-santanna.blxcksoul111.workers.dev/' },
+          { name: 'Classic Snake', category: 'Arcade', url: 'https://slyth.kabyik.dev/' },
+          { name: 'Subway Surfers', category: 'Runner/Platformer', url: 'https://texasearlystatehood-gcc.blxcksoul111.workers.dev/' },
+          { name: 'Bounce', category: 'Runner/Platformer', url: 'https://texasearlystatehood-ma.blxcksoul111.workers.dev/' },
+          { name: 'Basketball Stars', category: 'Sports', url: 'https://texasearlystatehood-houston.blxcksoul111.workers.dev/' },
+          { name: 'Pako Highway', category: 'Driving', url: 'https://texasearlystatehood-haden-ed.blxcksoul111.workers.dev/' },
+          { name: 'Retro Bowl', category: 'Sports', url: 'https://texasearlystatehood-mire-lamar.blxcksoul111.workers.dev/' },
+          { name: 'Flappy Bird', category: 'Arcade', url: 'https://texasearlystatehood-loren-zavala.blxcksoul111.workers.dev/' },
+          { name: 'Sci-Fi Shooter', category: 'FPS', url: 'https://texasearlystatehood-an-jones.blxcksoul111.workers.dev/' },
+          { name: 'FPS Shooter', category: 'FPS', url: 'https://texasearlystatehood-ed-burl.blxcksoul111.workers.dev/' },
+          { name: 'RocketLauncherSim', category: 'Simulation', url: 'https://texasearlystatehood-tejanos.blxcksoul111.workers.dev/' },
+          { name: 'OpenFront', category: 'Strategy', url: 'https://texasearlystatehood-openfront.blxcksoul111.workers.dev/' },
+          { name: 'SpeedStar', category: 'Runner/Platformer', url: 'https://texasearlystatehood-speedstar.blxcksoul111.workers.dev/' },
+          { name: 'Capital', category: 'Strategy', url: 'https://texasearlystatehood-capital.blxcksoul111.workers.dev/' }
+        ];
+
+        function renderGames(filter = 'All') {
+            const grid = document.getElementById('gameGrid');
+            grid.innerHTML = '';
+
+            const filtered = filter === 'All' ? games : games.filter(g => g.category === filter);
+
+            filtered.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div>
+                        <div class="card-header">
+                            <h3>${game.name}</h3>
+                            <span class="badge">${game.category}</span>
+                        </div>
+                    </div>
+                    <a href="${game.url}" target="_blank" class="play-btn">Play Now</a>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterGames(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderGames(category);
+        }
+
+        // Initial render on load
+        renderGames('All');
+    </script>
 </body>
 </html>
